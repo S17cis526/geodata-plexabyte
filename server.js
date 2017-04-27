@@ -33,13 +33,34 @@ function serveFile(file, type, req, res) {
   });
 }
 
+function addLocation(req, res) {
+  var url = require('url').parse(req.url);
+  var qs = require('qs').parse(url.query);
+  var address = qs.address;
+
+  // Perform geolocation with address
+  http.get('http://www.datasciencetoolkit.org/maps/api/geocode/json?sensor=false&address=' + address, function(err) {
+
+    if (err) {
+      //redirect back to index
+    }
+
+    var results = JSON.parse(body);
+    results.forEach(function(result) {
+
+      });
+  });
+}
+
 /** @function handleRequest
  * Handles incoming http requests
  * @param {http.incomingRequest} req - the request object
  * @param {http.serverResponse} res - the response object
  */
 function handleRequest(req, res) {
-  switch(req.url) {
+  var url = require('url').parse(req.url);
+
+  switch(url.pathname) {
     // Serving static files
     case '/':
     case '/index.html':
@@ -61,6 +82,11 @@ function handleRequest(req, res) {
       break;
     case '/united-states.json':
       serveFile('data/united-states.json', 'application/json', req, res);
+      break;
+
+    // Load locations
+    case '/add-location':
+      addLocation(req, res);
       break;
 
     // Serve error code
